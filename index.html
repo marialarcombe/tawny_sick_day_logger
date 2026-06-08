@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tawny Sick Day Logger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --slate:      #2a3b45;
+    --slate-soft: #4a5d68;
+    --taupe:      #c9bcaa;
+    --taupe-pale: #f4efe8;
+    --cream:      #efe8e0;
+    --grey:       #ddd6cc;
+    --grey-dark:  #6e7c84;
+    --black:      #22303a;
+    --white:      #FFFFFF;
+    --green:      #4f7a5b;
+    --green-bg:   #eef4ef;
+    --green-bd:   #c4d8c9;
+    --red:        #a8434a;
+    --red-bg:     #f7edee;
+    --red-bd:     #e3c5c8;
+    --blue:       #3f6b7d;
+    --blue-bg:    #ecf2f4;
+    --blue-bd:    #c4d6dd;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--cream);
+    color: var(--black);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--white);
+    border-bottom: 3px solid var(--slate);
+    padding: 22px 24px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .site-header h1 {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--slate);
+    letter-spacing: -0.2px;
+  }
+
+  .site-header p {
+    font-size: 0.82rem;
+    color: var(--grey-dark);
+    margin-top: 5px;
+    letter-spacing: 0.2px;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 6px rgba(42,59,69,0.08);
+    border: 1px solid var(--grey);
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--slate);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--taupe);
+  }
+
+  .step-num {
+    background: var(--slate);
+    color: var(--white);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ── Settings bar ── */
+  .settings-bar {
+    display: flex;
+    justify-content: flex-end;
+    max-width: 700px;
+    margin: 0 auto 12px;
+    padding: 0 16px;
+  }
+
+  .settings-toggle {
+    background: none;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--grey-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .settings-toggle:hover { border-color: var(--slate); color: var(--slate); background: var(--taupe-pale); }
+
+  .settings-panel {
+    display: none;
+    background: var(--taupe-pale);
+    border: 1px solid var(--taupe);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    max-width: 700px;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .settings-panel.open { display: block; }
+
+  .settings-panel label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .settings-panel input {
+    width: 100%;
+    max-width: 300px;
+    padding: 9px 13px;
+    border: 1.5px solid var(--taupe);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    background: var(--white);
+  }
+
+  .settings-panel input:focus { border-color: var(--slate); }
+
+  .settings-panel .hint { font-size: 0.78rem; color: var(--grey-dark); margin-top: 6px; }
+
+  /* ── Employee grid ── */
+  .emp-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .emp-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border: 2px solid var(--grey);
+    border-radius: 50px;
+    background: var(--white);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-family: inherit;
+    font-weight: 600;
+    color: #444;
+    transition: all 0.15s;
+  }
+
+  .emp-chip .av {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--slate), var(--slate-soft));
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .emp-chip.selected { border-color: var(--slate); background: var(--taupe-pale); color: var(--slate); }
+  .emp-chip:hover:not(.selected) { border-color: var(--taupe); background: #fafafa; }
+
+  .emp-chip .del-emp {
+    margin-left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .emp-chip .del-emp:hover { color: var(--red); background: var(--red-bg); }
+
+  .add-emp {
+    padding: 8px 14px;
+    border: 2px dashed var(--grey);
+    border-radius: 50px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--grey-dark);
+    transition: all 0.15s;
+  }
+
+  .add-emp:hover { border-color: var(--slate); color: var(--slate); }
+
+  /* ── Date range ── */
+  .date-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .date-field { flex: 1; min-width: 155px; }
+
+  .date-field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .date-field input {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1.5px solid var(--grey);
+    border-radius: 9px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--white);
+  }
+
+  .date-field input:focus { border-color: var(--slate); }
+
+  .date-hint {
+    font-size: 0.78rem;
+    color: var(--grey-dark);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Day list ── */
+  .summary-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .s-chip {
+    padding: 5px 13px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .s-chip.sick   { background: var(--red-bg);   color: var(--red); }
+  .s-chip.worked { background: var(--green-bg);  color: var(--green); }
+  .s-chip.hol    { background: var(--blue-bg);   color: var(--blue); }
+  .s-chip.off    { background: #f0ece5;           color: #666; }
+
+  .day-list { display: flex; flex-direction: column; gap: 7px; }
+
+  .day-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    border: 1px solid var(--grey);
+    background: #faf8f4;
+    flex-wrap: wrap;
+  }
+
+  .day-row.s-worked  { background: var(--green-bg); border-color: var(--green-bd); }
+  .day-row.s-sick    { background: var(--red-bg);   border-color: var(--red-bd); }
+  .day-row.s-holiday { background: var(--blue-bg);  border-color: var(--blue-bd); }
+  .day-row.s-off     { background: #f6f3ee;          border-color: #e8e2d8; }
+
+  .day-name {
+    font-weight: 700;
+    color: var(--slate);
+    font-size: 0.88rem;
+    min-width: 90px;
+  }
+
+  .day-date {
+    font-size: 0.85rem;
+    color: #444;
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .day-tag {
+    font-size: 0.7rem;
+    color: var(--grey-dark);
+    font-style: italic;
+  }
+
+  .status-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .sb {
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+
+  .sb.w  { border-color: var(--green); color: var(--green); background: var(--white); }
+  .sb.w.on  { background: var(--green); color: var(--white); }
+  .sb.w:hover:not(.on) { background: var(--green-bg); }
+
+  .sb.si { border-color: var(--red);   color: var(--red);   background: var(--white); }
+  .sb.si.on { background: var(--red);  color: var(--white); }
+  .sb.si:hover:not(.on) { background: var(--red-bg); }
+
+  .sb.h  { border-color: var(--blue);  color: var(--blue);  background: var(--white); }
+  .sb.h.on  { background: var(--blue); color: var(--white); }
+  .sb.h:hover:not(.on) { background: var(--blue-bg); }
+
+  .sb.o  { border-color: #aaa;         color: #666;         background: var(--white); }
+  .sb.o.on  { background: #aaa;        color: var(--white); }
+  .sb.o:hover:not(.on) { background: #f0ece5; }
+
+  /* ── Primary button ── */
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: var(--slate);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:active { transform: none; }
+  .btn-primary:disabled { background: var(--grey); cursor: not-allowed; transform: none; opacity: 1; }
+
+  /* ── Report box ── */
+  .report-wrap { margin-top: 14px; position: relative; }
+
+  .report-box {
+    background: var(--slate);
+    color: var(--cream);
+    border-radius: 10px;
+    padding: 18px 18px 18px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    padding-top: 42px;
+  }
+
+  .report-copy {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 13px;
+    background: rgba(255,255,255,0.14);
+    color: #eee;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 7px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+
+  .report-copy:hover { background: rgba(255,255,255,0.26); }
+  .report-copy.done  { background: var(--green); color: white; border-color: var(--green); }
+
+  .btn-save {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    background: transparent;
+    border: 2px solid var(--taupe);
+    border-radius: 10px;
+    color: var(--slate);
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-save:hover { background: var(--taupe-pale); border-color: var(--slate); }
+
+  /* ── Saved entries ── */
+  .email-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 13px 16px;
+    background: var(--taupe-pale);
+    border: 1.5px solid var(--taupe);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .email-bar label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--slate);
+    white-space: nowrap;
+  }
+
+  .email-bar select {
+    flex: 1;
+    min-width: 140px;
+    padding: 7px 11px;
+    border: 1.5px solid var(--taupe);
+    border-radius: 8px;
+    font-size: 0.87rem;
+    font-family: inherit;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .email-bar select:focus { border-color: var(--slate); }
+
+  .btn-email {
+    padding: 8px 16px;
+    background: var(--slate);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+  }
+
+  .btn-email:hover { opacity: 0.9; }
+
+  .btn-copy-all {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--slate);
+    border: 1.5px solid var(--taupe);
+    border-radius: 8px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .btn-copy-all:hover { background: var(--taupe-pale); border-color: var(--slate); }
+  .btn-copy-all.done { background: var(--green); color: white; border-color: var(--green); }
+
+  .email-feedback {
+    width: 100%;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .email-feedback.ok  { display: block; background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); font-weight: 600; line-height: 1.5; }
+  .email-feedback.err { display: block; background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bd); }
+
+  .entry-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 9px;
+    background: var(--taupe-pale);
+    border: 1px solid var(--taupe);
+    margin-bottom: 8px;
+  }
+
+  .entry-info { flex: 1; }
+  .entry-name { font-weight: 700; color: var(--slate); font-size: 0.92rem; }
+  .entry-meta { font-size: 0.78rem; color: var(--grey-dark); margin-top: 2px; }
+
+  .entry-badge {
+    background: var(--red-bg);
+    color: var(--red);
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .entry-actions { display: flex; gap: 5px; }
+
+  .icon-btn {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    border: 1px solid var(--grey);
+    background: var(--white);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.12s;
+  }
+
+  .icon-btn:hover { background: var(--taupe-pale); border-color: var(--slate); }
+  .icon-btn.del:hover { background: var(--red-bg); border-color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 28px 20px;
+    color: #b3a89a;
+    font-size: 0.88rem;
+  }
+
+  .empty-state .ico { font-size: 2.2rem; margin-bottom: 8px; }
+
+  /* ── Modal ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(34,48,58,0.42);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 26px;
+    width: 320px;
+    box-shadow: 0 16px 48px rgba(34,48,58,0.22);
+  }
+
+  .modal h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--slate);
+    margin-bottom: 14px;
+    font-size: 1.05rem;
+  }
+
+  .modal input {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1.5px solid var(--grey);
+    border-radius: 9px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 14px;
+  }
+
+  .modal input:focus { border-color: var(--slate); }
+
+  .modal-btns { display: flex; gap: 8px; }
+
+  .modal-btns button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 9px;
+    border: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn-cancel { background: #f0ece5; color: #555; }
+  .btn-confirm { background: var(--slate); color: var(--white); }
+
+  /* ── View modal ── */
+  .view-modal {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 26px;
+    width: 90%;
+    max-width: 560px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 16px 48px rgba(34,48,58,0.22);
+  }
+
+  .view-modal h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--slate);
+    margin-bottom: 14px;
+    font-size: 1.05rem;
+  }
+
+  .view-report {
+    background: var(--slate);
+    color: var(--cream);
+    border-radius: 9px;
+    padding: 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.83rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    margin-bottom: 14px;
+  }
+
+  .view-close {
+    width: 100%;
+    padding: 10px;
+    background: var(--taupe-pale);
+    border: 1.5px solid var(--taupe);
+    border-radius: 9px;
+    color: var(--slate);
+    font-weight: 700;
+    font-family: inherit;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+
+  /* ── How to use ── */
+  .help-card {
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 6px rgba(42,59,69,0.08);
+    border: 1px solid var(--taupe);
+    overflow: hidden;
+  }
+
+  .help-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--taupe-pale);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--slate);
+    transition: background 0.15s;
+    text-align: left;
+  }
+
+  .help-toggle:hover { background: var(--taupe); }
+
+  .help-toggle .arrow { font-size: 0.75rem; transition: transform 0.2s; }
+  .help-toggle.open .arrow { transform: rotate(180deg); }
+
+  .help-body {
+    display: none;
+    padding: 18px 20px 20px;
+    border-top: 1px solid var(--taupe);
+  }
+
+  .help-body.open { display: block; }
+
+  .help-steps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+
+  .help-steps li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #333;
+  }
+
+  .help-steps li .hn {
+    background: var(--slate);
+    color: var(--white);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .help-divider {
+    border: none;
+    border-top: 1px solid var(--taupe);
+    margin: 14px 0;
+  }
+
+  .help-warn {
+    background: #fbf6ec;
+    border: 1px solid #e8dcc2;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #6b5526;
+    line-height: 1.5;
+    margin-top: 14px;
+  }
+
+  /* ── Backup section in settings ── */
+  .settings-divider {
+    border: none;
+    border-top: 1px solid var(--taupe);
+    margin: 16px 0;
+  }
+
+  .backup-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  .btn-backup {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-export {
+    background: var(--slate);
+    color: var(--white);
+    border: none;
+  }
+
+  .btn-export:hover { opacity: 0.9; }
+
+  .btn-import {
+    background: transparent;
+    color: var(--slate);
+    border: 1.5px solid var(--taupe);
+  }
+
+  .btn-import:hover { background: var(--taupe-pale); border-color: var(--slate); }
+
+  .backup-feedback {
+    font-size: 0.8rem;
+    color: var(--green);
+    font-weight: 600;
+    display: none;
+  }
+
+  .backup-feedback.show { display: inline; }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 24px 16px 0;
+    font-size: 0.75rem;
+    color: var(--grey-dark);
+  }
+
+  @media (max-width: 500px) {
+    .status-btns { gap: 4px; }
+    .sb { font-size: 0.72rem; padding: 4px 8px; }
+    .day-name { min-width: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>The Tawny Sick Day Logger</h1>
+  <p>Internal payroll tool — absence tracking &amp; report generation</p>
+</header>
+
+<div class="container">
+
+  <!-- How to use -->
+  <div class="help-card">
+    <button class="help-toggle" id="helpToggle" onclick="toggleHelp()">
+      <span>❓ How to use this tool</span>
+      <span class="arrow">▼</span>
+    </button>
+    <div class="help-body" id="helpBody">
+      <ul class="help-steps">
+        <li>
+          <span class="hn">1</span>
+          <span><strong>First time set-up:</strong> Click ⚙ Settings, enter your name (used in the email sign-off) and update the employee list for your team. Click the ✕ on any name to remove it, or <em>+ Add Employee</em> to add new starters.</span>
+        </li>
+        <li>
+          <span class="hn">2</span>
+          <span><strong>Log an absence:</strong> Select the employee, then set the date range — starting from their <em>last day worked before falling sick</em>, through to their <em>first day back</em>. The app will display every day in that range.</span>
+        </li>
+        <li>
+          <span class="hn">3</span>
+          <span><strong>Mark each day:</strong> Use the four buttons on each row — <strong>Worked</strong>, <strong>Sickness</strong>, <strong>Holiday</strong> (approved planned leave), or <strong>Day off</strong> (never due to work). Only days marked as Sickness count as missed shifts.</span>
+        </li>
+        <li>
+          <span class="hn">4</span>
+          <span><strong>Generate &amp; save:</strong> Click <em>Generate Payroll Report</em> to preview the formatted report. Check it looks right, then click <em>Save &amp; Start New Entry</em> to store it. Repeat for each employee who was absent that month.</span>
+        </li>
+        <li>
+          <span class="hn">5</span>
+          <span><strong>Month end — email Josh &amp; Jess:</strong> In the Saved Entries section, select the month from the dropdown, then click <em>Open Email Draft</em>. This opens your email app pre-addressed to Josh and Jess with all that month's entries compiled in the correct format. Review and send.</span>
+        </li>
+      </ul>
+      <hr class="help-divider">
+      <ul class="help-steps">
+        <li>
+          <span class="hn" style="background:#6b5526;">!</span>
+          <span><strong>Backup your data:</strong> Your entries are saved in your browser. If you clear your browser's cookies or site data, entries will be lost. Use the <strong>Export Backup</strong> button in Settings to download a copy regularly — especially before clearing your browser or switching computers. Use <strong>Import Backup</strong> to restore.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="settings-bar">
+    <button class="settings-toggle" onclick="toggleSettings()">⚙ Settings</button>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <label>Your Name (used in email sign-off)</label>
+    <input type="text" id="managerName" placeholder="e.g. Josh Chadwick" oninput="saveManagerName()" />
+    <p class="hint">Saved automatically in your browser.</p>
+
+    <hr class="settings-divider">
+
+    <label>Backup &amp; Restore</label>
+    <p class="hint" style="margin-bottom:10px;">Export saves all your entries and employee list to a file. Import restores from a previously exported file.</p>
+    <div class="backup-row">
+      <button class="btn-backup btn-export" onclick="exportData()">⬇ Export Backup</button>
+      <button class="btn-backup btn-import" onclick="document.getElementById('importFile').click()">⬆ Import Backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" />
+      <span class="backup-feedback" id="backupFeedback"></span>
+    </div>
+  </div>
+
+  <!-- Step 1: Employee -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">1</span> Select Employee</div>
+    <div class="emp-grid" id="empGrid"></div>
+  </div>
+
+  <!-- Step 2: Date range -->
+  <div class="card">
+    <div class="card-title"><span class="step-num">2</span> Set Date Range</div>
+    <p class="date-hint">Start from the <strong>last day they worked</strong> before being absent, through to their <strong>first day back</strong>.</p>
+    <div class="date-row">
+      <div class="date-field">
+        <label>From (last day worked)</label>
+        <input type="date" id="dateFrom" />
+      </div>
+      <div class="date-field">
+        <label>To (first day back)</label>
+        <input type="date" id="dateTo" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Day status -->
+  <div class="card" id="step3" style="display:none">
+    <div class="card-title"><span class="step-num">3</span> Mark Each Day</div>
+    <div class="summary-chips" id="summaryChips"></div>
+    <div class="day-list" id="dayList"></div>
+  </div>
+
+  <!-- Step 4: Generate -->
+  <div class="card" id="step4" style="display:none">
+    <div class="card-title"><span class="step-num">4</span> Generate Report</div>
+    <button class="btn-primary" onclick="generateReport()">📋 Generate Payroll Report</button>
+    <div id="reportWrap" style="display:none">
+      <div class="report-wrap">
+        <button class="report-copy" id="copyBtn" onclick="copyReport()">Copy</button>
+        <div class="report-box" id="reportBox"></div>
+      </div>
+      <button class="btn-save" onclick="saveEntry()">💾 Save &amp; Start New Entry</button>
+    </div>
+  </div>
+
+  <!-- Saved entries -->
+  <div class="card" id="savedCard">
+    <div class="card-title">📁 Saved Entries</div>
+    <div class="email-bar" id="emailBar" style="display:none">
+      <label>📧 Email Josh &amp; Jess:</label>
+      <select id="monthSel"></select>
+      <button class="btn-email" onclick="openEmail()">Open Email Draft</button>
+      <button class="btn-copy-all" id="copyAllBtn" onclick="copyAll()">Copy Formatted</button>
+      <div class="email-feedback" id="emailFeedback"></div>
+    </div>
+    <div id="entriesContainer">
+      <div class="empty-state"><div class="ico">📋</div>No entries yet — generate a report above to save it here.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">The Tawny &nbsp;·&nbsp; Internal Use Only</footer>
+
+<!-- Add employee modal -->
+<div class="overlay" id="addOverlay">
+  <div class="modal">
+    <h3>Add Employee</h3>
+    <input type="text" id="newEmpInput" placeholder="Full name" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAdd()">Cancel</button>
+      <button class="btn-confirm" onclick="confirmAdd()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- View report modal -->
+<div class="overlay" id="viewOverlay">
+  <div class="view-modal">
+    <h3 id="viewTitle"></h3>
+    <div class="view-report" id="viewReport"></div>
+    <button class="view-close" onclick="closeView()">Close</button>
+  </div>
+</div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────────
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// ── State ──────────────────────────────────────────────────────────────────────
+let employees    = JSON.parse(localStorage.getItem('tawny_emps')    || '[]');
+let savedEntries = JSON.parse(localStorage.getItem('tawny_entries') || '[]');
+let selectedEmp  = null;
+let dayStatuses  = {};
+
+// ── Bootstrap ──────────────────────────────────────────────────────────────────
+function init() {
+  // Seed default employees if none saved
+  if (!employees.length) {
+    employees = ['Employee One', 'Employee Two'];
+    saveEmps();
+  }
+
+  // Load manager name
+  const mn = localStorage.getItem('tawny_manager') || '';
+  document.getElementById('managerName').value = mn;
+
+  renderEmps();
+  renderEntries();
+
+  document.getElementById('dateFrom').addEventListener('change', onDates);
+  document.getElementById('dateTo').addEventListener('change', onDates);
+}
+
+// ── Help ───────────────────────────────────────────────────────────────────────
+function toggleHelp() {
+  const body   = document.getElementById('helpBody');
+  const toggle = document.getElementById('helpToggle');
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+// ── Settings ───────────────────────────────────────────────────────────────────
+function toggleSettings() {
+  document.getElementById('settingsPanel').classList.toggle('open');
+}
+
+function saveManagerName() {
+  localStorage.setItem('tawny_manager', document.getElementById('managerName').value.trim());
+}
+
+// ── Employees ──────────────────────────────────────────────────────────────────
+function saveEmps() {
+  localStorage.setItem('tawny_emps', JSON.stringify(employees));
+}
+
+function renderEmps() {
+  const grid = document.getElementById('empGrid');
+  grid.innerHTML = '';
+
+  employees.forEach(name => {
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const chip = document.createElement('button');
+    chip.className = 'emp-chip' + (selectedEmp === name ? ' selected' : '');
+    chip.innerHTML = `<span class="av">${initials}</span>${name}<button class="del-emp" title="Remove" onclick="event.stopPropagation();removeEmp('${name.replace(/'/g,"\\'")}')">✕</button>`;
+    chip.onclick = () => selectEmp(name);
+    grid.appendChild(chip);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-emp';
+  addBtn.textContent = '+ Add Employee';
+  addBtn.onclick = openAdd;
+  grid.appendChild(addBtn);
+}
+
+function selectEmp(name) {
+  selectedEmp = name;
+  renderEmps();
+  checkDates();
+}
+
+function removeEmp(name) {
+  if (!confirm(`Remove ${name} from the list?`)) return;
+  employees = employees.filter(e => e !== name);
+  if (selectedEmp === name) selectedEmp = null;
+  saveEmps();
+  renderEmps();
+  checkDates();
+}
+
+function openAdd() {
+  document.getElementById('newEmpInput').value = '';
+  document.getElementById('addOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('newEmpInput').focus(), 60);
+}
+
+function closeAdd() { document.getElementById('addOverlay').classList.remove('open'); }
+
+function confirmAdd() {
+  const val = document.getElementById('newEmpInput').value.trim();
+  if (!val) return;
+  if (!employees.includes(val)) { employees.push(val); saveEmps(); }
+  selectedEmp = val;
+  renderEmps();
+  closeAdd();
+  checkDates();
+}
+
+// ── Dates ──────────────────────────────────────────────────────────────────────
+function onDates() { checkDates(); }
+
+function checkDates() {
+  const from = document.getElementById('dateFrom').value;
+  const to   = document.getElementById('dateTo').value;
+  if (!selectedEmp || !from || !to || from > to) {
+    document.getElementById('step3').style.display = 'none';
+    document.getElementById('step4').style.display = 'none';
+    return;
+  }
+  buildDays(from, to);
+  document.getElementById('step3').style.display = 'block';
+  document.getElementById('step4').style.display = 'block';
+  document.getElementById('reportWrap').style.display = 'none';
+}
+
+function buildDays(from, to) {
+  dayStatuses = {};
+  const list  = document.getElementById('dayList');
+  list.innerHTML = '';
+
+  const start = new Date(from + 'T00:00:00');
+  const end   = new Date(to   + 'T00:00:00');
+  const cur   = new Date(start);
+  let idx = 0;
+
+  while (cur <= end) {
+    const ds = datStr(cur);
+    const isFirst = idx === 0;
+    const isLast  = cur.getTime() === end.getTime();
+    dayStatuses[ds] = (isFirst || isLast) ? 'worked' : 'off';
+
+    const row  = document.createElement('div');
+    row.id     = 'row-' + ds;
+    row.className = 'day-row s-' + dayStatuses[ds];
+
+    const tag  = isFirst ? '(from)' : isLast ? '(to)' : '';
+    row.innerHTML = `
+      <span class="day-name">${DAYS[cur.getDay()]}</span>
+      <span class="day-date">${cur.getDate()} ${MONTHS[cur.getMonth()]} <span class="day-tag">${tag}</span></span>
+      <div class="status-btns">
+        <button class="sb w  ${dayStatuses[ds]==='worked'  ?'on':''}" onclick="setSt('${ds}','worked')">✓ Worked</button>
+        <button class="sb si ${dayStatuses[ds]==='sick'    ?'on':''}" onclick="setSt('${ds}','sick')">🤒 Sickness</button>
+        <button class="sb h  ${dayStatuses[ds]==='holiday' ?'on':''}" onclick="setSt('${ds}','holiday')">🏖️ Holiday</button>
+        <button class="sb o  ${dayStatuses[ds]==='off'     ?'on':''}" onclick="setSt('${ds}','off')">— Day off</button>
+      </div>`;
+    list.appendChild(row);
+    cur.setDate(cur.getDate() + 1);
+    idx++;
+  }
+  updateSummary();
+}
+
+function setSt(ds, status) {
+  dayStatuses[ds] = status;
+  const row = document.getElementById('row-' + ds);
+  ['worked','sick','holiday','off'].forEach(s => row.classList.remove('s-' + s));
+  row.classList.add('s-' + status);
+  row.querySelectorAll('.sb').forEach(b => {
+    b.classList.remove('on');
+    if ((status === 'worked'  && b.classList.contains('w'))  ||
+        (status === 'sick'    && b.classList.contains('si')) ||
+        (status === 'holiday' && b.classList.contains('h'))  ||
+        (status === 'off'     && b.classList.contains('o'))) b.classList.add('on');
+  });
+  updateSummary();
+}
+
+function updateSummary() {
+  const c = { worked: 0, sick: 0, holiday: 0, off: 0 };
+  Object.values(dayStatuses).forEach(s => c[s]++);
+  document.getElementById('summaryChips').innerHTML = `
+    <span class="s-chip sick">🤒 ${c.sick} sick shift${c.sick !== 1 ? 's' : ''}</span>
+    <span class="s-chip worked">✓ ${c.worked} worked</span>
+    ${c.holiday ? `<span class="s-chip hol">🏖️ ${c.holiday} holiday</span>` : ''}
+    <span class="s-chip off">— ${c.off} day${c.off !== 1 ? 's' : ''} off</span>`;
+}
+
+// ── Report ─────────────────────────────────────────────────────────────────────
+function generateReport() {
+  const sick = Object.values(dayStatuses).filter(s => s === 'sick').length;
+  if (!sick) { alert('Please mark at least one day as Sickness before generating.'); return; }
+
+  const lines = [`${selectedEmp} – ${sick} x shift${sick !== 1 ? 's' : ''} missed`, ''];
+  Object.keys(dayStatuses).sort().forEach(ds => {
+    const d = new Date(ds + 'T00:00:00');
+    const label = { worked: 'worked', sick: 'sickness', holiday: 'approved holiday', off: 'off/was never due to work' }[dayStatuses[ds]];
+    lines.push(`${DAYS[d.getDay()]} ${ordinal(d.getDate())} ${MONTHS[d.getMonth()]} - ${label}`);
+  });
+
+  const text = lines.join('\n');
+  document.getElementById('reportBox').textContent = text;
+  document.getElementById('reportWrap').style.display = 'block';
+  document.getElementById('copyBtn').textContent = 'Copy';
+  document.getElementById('copyBtn').classList.remove('done');
+  document.getElementById('reportWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyReport() {
+  navigator.clipboard.writeText(document.getElementById('reportBox').textContent).then(() => {
+    const b = document.getElementById('copyBtn');
+    b.textContent = '✓ Copied';
+    b.classList.add('done');
+    setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('done'); }, 2000);
+  });
+}
+
+function saveEntry() {
+  const sick   = Object.values(dayStatuses).filter(s => s === 'sick').length;
+  const from   = document.getElementById('dateFrom').value;
+  const to     = document.getElementById('dateTo').value;
+  const report = document.getElementById('reportBox').textContent;
+
+  const sickDates = Object.entries(dayStatuses).filter(([,s]) => s === 'sick').map(([d]) => d).sort();
+  const refD      = new Date((sickDates[0] || from) + 'T00:00:00');
+  const monthKey  = `${refD.getFullYear()}-${String(refD.getMonth()+1).padStart(2,'0')}`;
+  const monthLabel= `${MONTHS[refD.getMonth()]} ${refD.getFullYear()}`;
+
+  savedEntries.unshift({
+    id: Date.now(), employee: selectedEmp,
+    from, to, sick, report, monthKey, monthLabel,
+    savedAt: new Date().toLocaleDateString('en-GB')
+  });
+  localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
+  renderEntries();
+
+  // Reset
+  selectedEmp = null;
+  dayStatuses = {};
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value   = '';
+  document.getElementById('step3').style.display = 'none';
+  document.getElementById('step4').style.display = 'none';
+  document.getElementById('reportWrap').style.display = 'none';
+  renderEmps();
+  document.getElementById('savedCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── Entries ────────────────────────────────────────────────────────────────────
+function renderEntries() {
+  const cont    = document.getElementById('entriesContainer');
+  const emailBar= document.getElementById('emailBar');
+
+  if (!savedEntries.length) {
+    cont.innerHTML = '<div class="empty-state"><div class="ico">📋</div>No entries yet — generate a report above to save it here.</div>';
+    emailBar.style.display = 'none';
+    return;
+  }
+
+  emailBar.style.display = 'flex';
+  populateMonthSel();
+  cont.innerHTML = '';
+
+  savedEntries.forEach(e => {
+    const fromD = new Date(e.from + 'T00:00:00');
+    const toD   = new Date(e.to   + 'T00:00:00');
+    const fStr  = `${fromD.getDate()} ${MONTHS[fromD.getMonth()]}`;
+    const tStr  = `${toD.getDate()}   ${MONTHS[toD.getMonth()]}`;
+
+    const card = document.createElement('div');
+    card.className = 'entry-card';
+    card.innerHTML = `
+      <div class="entry-info">
+        <div class="entry-name">${e.employee}</div>
+        <div class="entry-meta">${fStr} → ${tStr.trim()} &nbsp;·&nbsp; ${e.monthLabel || ''} &nbsp;·&nbsp; Saved ${e.savedAt}</div>
+      </div>
+      <div class="entry-badge">🤒 ${e.sick} shift${e.sick !== 1 ? 's' : ''}</div>
+      <div class="entry-actions">
+        <button class="icon-btn" title="View" onclick="viewEntry(${e.id})">👁</button>
+        <button class="icon-btn del" title="Delete" onclick="deleteEntry(${e.id})">🗑</button>
+      </div>`;
+    cont.appendChild(card);
+  });
+}
+
+function populateMonthSel() {
+  const sel = document.getElementById('monthSel');
+  const cur = sel.value;
+  const seen = new Set();
+  const months = [];
+
+  savedEntries.forEach(e => {
+    const key   = e.monthKey   || fromToMonthKey(e.from);
+    const label = e.monthLabel || fromToMonthLabel(e.from);
+    if (!seen.has(key)) { seen.add(key); months.push({ key, label }); }
+  });
+
+  months.sort((a, b) => b.key.localeCompare(a.key));
+  sel.innerHTML = months.map(m => `<option value="${m.key}">${m.label}</option>`).join('');
+  if (cur && seen.has(cur)) sel.value = cur;
+}
+
+function viewEntry(id) {
+  const e = savedEntries.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('viewTitle').textContent = e.employee + ' — ' + (e.monthLabel || '');
+  document.getElementById('viewReport').textContent = e.report;
+  document.getElementById('viewOverlay').classList.add('open');
+}
+
+function closeView() { document.getElementById('viewOverlay').classList.remove('open'); }
+
+function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  savedEntries = savedEntries.filter(e => e.id !== id);
+  localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
+  renderEntries();
+}
+
+// ── Email ──────────────────────────────────────────────────────────────────────
+function getMonthEntries() {
+  const key = document.getElementById('monthSel').value;
+  return savedEntries.filter(e => (e.monthKey || fromToMonthKey(e.from)) === key);
+}
+
+function buildEmailBodyPlain(entries) {
+  const label   = entries[0].monthLabel || fromToMonthLabel(entries[0].from);
+  const manager = localStorage.getItem('tawny_manager') || '';
+  const body    = entries.map(e => e.report).join('\n\n');
+  return `Hi Josh and Jess,\n\nPlease find below the return to work details for ${label}.\n\n${body}\n\nMany thanks${manager ? '\n' + manager : ''}`;
+}
+
+function buildEmailBodyHtml(entries) {
+  const label   = entries[0].monthLabel || fromToMonthLabel(entries[0].from);
+  const manager = localStorage.getItem('tawny_manager') || '';
+
+  const entriesHtml = entries.map(e => {
+    const lines    = e.report.split('\n');
+    const header   = lines[0];
+    const dayLines = lines.slice(2).filter(l => l.trim());
+
+    const daysHtml = dayLines.map(line => {
+      let color = '#555555';
+      if (line.includes('sickness'))        color = '#a8434a';
+      else if (line.includes('worked'))     color = '#4f7a5b';
+      else if (line.includes('approved holiday')) color = '#3f6b7d';
+      return `<p style="margin:3px 0;font-size:13.5px;color:${color};font-family:Arial,sans-serif;">${line}</p>`;
+    }).join('');
+
+    return `
+      <div style="margin-bottom:18px;padding:12px 16px;background:#ffffff;border-left:4px solid #2a3b45;border-radius:3px;">
+        <p style="margin:0 0 8px 0;font-weight:bold;color:#2a3b45;font-size:14px;font-family:Arial,sans-serif;">${header}</p>
+        ${daysHtml}
+      </div>`;
+  }).join('');
+
+  return `<div style="font-family:Arial,sans-serif;color:#22303a;font-size:14px;line-height:1.6;max-width:580px;">
+    <p style="margin:0 0 12px 0;">Hi Josh and Jess,</p>
+    <p style="margin:0 0 16px 0;">Please find below the return to work details for <strong>${label}</strong>.</p>
+    ${entriesHtml}
+    <p style="margin:16px 0 0 0;">Many thanks${manager ? '<br>' + manager : ''}</p>
+  </div>`;
+}
+
+async function openEmail() {
+  const entries = getMonthEntries();
+  if (!entries.length) { showEmailFeedback('No entries for this month.', 'err'); return; }
+
+  const label   = entries[0].monthLabel || fromToMonthLabel(entries[0].from);
+  const subject = encodeURIComponent(`Payroll – Return to Work Forms – ${label}`);
+
+  // Copy colour-coded HTML to clipboard — paste into Outlook with Ctrl+V
+  try {
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        'text/html':  new Blob([buildEmailBodyHtml(entries)],  { type: 'text/html' }),
+        'text/plain': new Blob([buildEmailBodyPlain(entries)], { type: 'text/plain' })
+      })
+    ]);
+    showEmailFeedback('✓ Email is opening — To &amp; Subject are pre-filled. Click in the email body and press Ctrl+V to paste the colour-coded report.', 'ok');
+  } catch(err) {
+    // Fallback if ClipboardItem not supported
+    navigator.clipboard.writeText(buildEmailBodyPlain(entries));
+    showEmailFeedback('Email opening — click in the email body and press Ctrl+V to paste.', 'ok');
+  }
+
+  // Open email client with To + Subject only (body will be pasted)
+  window.location.href = `mailto:josh@thetawny.co.uk,jess@thetawny.co.uk?subject=${subject}`;
+}
+
+function copyAll() {
+  const entries = getMonthEntries();
+  if (!entries.length) { showEmailFeedback('No entries for this month.', 'err'); return; }
+
+  navigator.clipboard.write([
+    new ClipboardItem({
+      'text/html':  new Blob([buildEmailBodyHtml(entries)],  { type: 'text/html' }),
+      'text/plain': new Blob([buildEmailBodyPlain(entries)], { type: 'text/plain' })
+    })
+  ]).then(() => {
+    const b = document.getElementById('copyAllBtn');
+    b.textContent = '✓ Copied!';
+    b.classList.add('done');
+    setTimeout(() => { b.textContent = 'Copy Formatted'; b.classList.remove('done'); }, 2500);
+  }).catch(() => {
+    // Fallback
+    navigator.clipboard.writeText(buildEmailBodyPlain(entries));
+  });
+}
+
+function showEmailFeedback(msg, type) {
+  const el = document.getElementById('emailFeedback');
+  el.textContent = msg;
+  el.className = 'email-feedback ' + type;
+}
+
+// ── Export / Import ────────────────────────────────────────────────────────────
+function exportData() {
+  const data = {
+    exportedAt: new Date().toISOString(),
+    version: 1,
+    employees,
+    entries: savedEntries
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
+  a.href     = url;
+  a.download = `tawny-sick-log-backup-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showBackupFeedback(`✓ Backup downloaded (${savedEntries.length} entr${savedEntries.length !== 1 ? 'ies' : 'y'})`);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.entries || !Array.isArray(data.entries)) throw new Error('Invalid file');
+
+      const hasExisting = savedEntries.length > 0;
+      let merge = false;
+      if (hasExisting) {
+        merge = confirm(`You already have ${savedEntries.length} saved entr${savedEntries.length !== 1 ? 'ies' : 'y'}.\n\nClick OK to merge the backup with your existing entries.\nClick Cancel to replace everything with the backup.`);
+      }
+
+      if (merge) {
+        // Merge: add imported entries that don't already exist (by id)
+        const existingIds = new Set(savedEntries.map(e => e.id));
+        const newEntries  = data.entries.filter(e => !existingIds.has(e.id));
+        savedEntries = [...savedEntries, ...newEntries].sort((a, b) => b.id - a.id);
+        showBackupFeedback(`✓ Merged — ${newEntries.length} new entr${newEntries.length !== 1 ? 'ies' : 'y'} added`);
+      } else {
+        savedEntries = data.entries;
+        if (data.employees && Array.isArray(data.employees)) {
+          employees = data.employees;
+          saveEmps();
+          renderEmps();
+        }
+        showBackupFeedback(`✓ Restored ${savedEntries.length} entr${savedEntries.length !== 1 ? 'ies' : 'y'} from backup`);
+      }
+
+      localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
+      renderEntries();
+    } catch (err) {
+      alert('Could not read this file. Please use a backup file exported from this app.');
+    }
+    // Reset file input so same file can be re-imported if needed
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function showBackupFeedback(msg) {
+  const el = document.getElementById('backupFeedback');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────────────
+function datStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function ordinal(n) {
+  const s = ['th','st','nd','rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+function fromToMonthKey(from) {
+  const d = new Date(from + 'T00:00:00');
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function fromToMonthLabel(from) {
+  const d = new Date(from + 'T00:00:00');
+  return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ── Keyboard ───────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeAdd(); closeView(); }
+  if (e.key === 'Enter' && document.getElementById('addOverlay').classList.contains('open')) confirmAdd();
+});
+
+init();
+</script>
+</body>
+</html>
