@@ -1320,9 +1320,9 @@ function buildEmailBodyHtml(entries) {
 
     const daysHtml = dayLines.map(line => {
       let color = '#555555';
-      if (line.includes('sickness'))        color = '#a8434a';
-      else if (line.includes('worked'))     color = '#4f7a5b';
-      else if (line.includes('approved holiday')) color = '#3f6b7d';
+      if (line.includes('sickness'))        color = '#c0152f';
+      else if (line.includes('worked'))     color = '#15803d';
+      else if (line.includes('approved holiday')) color = '#0369a1';
       return `<p style="margin:3px 0;font-size:13.5px;color:${color};font-family:Arial,sans-serif;">${line}</p>`;
     }).join('');
 
