@@ -889,6 +889,13 @@
 
     <hr class="settings-divider">
 
+    <label>Google Sheet Sync (optional)</label>
+    <p class="hint" style="margin-bottom:10px;">Paste your Google Sheet web app link here to send each month's data to the sheet when you open the email draft. Saved in your browser only, never in the app's code. See the README for the 5-minute setup.</p>
+    <input type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveSheetUrl()" style="max-width:100%;" />
+    <p class="hint" id="sheetStatus" style="margin-top:8px;"></p>
+
+    <hr class="settings-divider">
+
     <label>Backup &amp; Restore</label>
     <p class="hint" style="margin-bottom:10px;">Export saves all your entries and employee list to a file. Import restores from a previously exported file.</p>
     <div class="backup-row">
@@ -1004,6 +1011,10 @@ function init() {
   const mn = localStorage.getItem('tawny_manager') || '';
   document.getElementById('managerName').value = mn;
 
+  // Load Google Sheet sync URL
+  document.getElementById('sheetUrl').value = localStorage.getItem('tawny_sheet_url') || '';
+  updateSheetStatus();
+
   renderEmps();
   renderEntries();
 
@@ -1026,6 +1037,21 @@ function toggleSettings() {
 
 function saveManagerName() {
   localStorage.setItem('tawny_manager', document.getElementById('managerName').value.trim());
+}
+
+function saveSheetUrl() {
+  localStorage.setItem('tawny_sheet_url', document.getElementById('sheetUrl').value.trim());
+  updateSheetStatus();
+}
+
+function updateSheetStatus() {
+  const url = (localStorage.getItem('tawny_sheet_url') || '').trim();
+  const el  = document.getElementById('sheetStatus');
+  if (!el) return;
+  el.textContent  = url
+    ? '✓ Linked — this month’s data will be sent to the sheet when you open the email draft.'
+    : 'Not linked — emailing still works; no data is sent to a sheet.';
+  el.style.color  = url ? '#15803d' : '#6e7c84';
 }
 
 // ── Employees ──────────────────────────────────────────────────────────────────
@@ -1341,6 +1367,44 @@ function buildEmailBodyHtml(entries) {
   </div>`;
 }
 
+// Send the month's entries to the linked Google Sheet (if configured).
+// Uses a no-cors POST so it works from a static page; the response is opaque,
+// so we optimistically mark entries as pushed and guard against duplicates.
+async function pushToSheet(entries) {
+  const url = (localStorage.getItem('tawny_sheet_url') || '').trim();
+  if (!url) return { skipped: true };
+
+  const pending = entries.filter(e => !e.pushedToSheet);
+  if (!pending.length) return { alreadyDone: true };
+
+  const payload = {
+    month: pending[0].monthLabel || fromToMonthLabel(pending[0].from),
+    rows: pending.map(e => ({
+      month:    e.monthLabel || fromToMonthLabel(e.from),
+      employee: e.employee,
+      sick:     e.sick,
+      from:     fmtDate(e.from),
+      to:       fmtDate(e.to),
+      savedAt:  e.savedAt,
+      report:   e.report
+    }))
+  };
+
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    pending.forEach(e => { e.pushedToSheet = true; });
+    localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
+    return { sent: pending.length };
+  } catch (err) {
+    return { error: true };
+  }
+}
+
 async function openEmail() {
   const entries = getMonthEntries();
   if (!entries.length) { showEmailFeedback('No entries for this month.', 'err'); return; }
@@ -1348,7 +1412,8 @@ async function openEmail() {
   const label   = entries[0].monthLabel || fromToMonthLabel(entries[0].from);
   const subject = encodeURIComponent(`Payroll – Return to Work Forms – ${label}`);
 
-  // Copy colour-coded HTML to clipboard — paste into Outlook with Ctrl+V
+  // Copy colour-coded HTML to clipboard — paste into the email body with Ctrl+V
+  let msg;
   try {
     await navigator.clipboard.write([
       new ClipboardItem({
@@ -1356,12 +1421,19 @@ async function openEmail() {
         'text/plain': new Blob([buildEmailBodyPlain(entries)], { type: 'text/plain' })
       })
     ]);
-    showEmailFeedback('✓ Email is opening — To &amp; Subject are pre-filled. Click in the email body and press Ctrl+V to paste the colour-coded report.', 'ok');
+    msg = '✓ Email is opening — To & Subject are pre-filled. Click in the email body and press Ctrl+V to paste the colour-coded report.';
   } catch(err) {
     // Fallback if ClipboardItem not supported
     navigator.clipboard.writeText(buildEmailBodyPlain(entries));
-    showEmailFeedback('Email opening — click in the email body and press Ctrl+V to paste.', 'ok');
+    msg = 'Email opening — click in the email body and press Ctrl+V to paste.';
   }
+
+  // Send this month's data to the Google Sheet, if a link is set in Settings
+  const res = await pushToSheet(entries);
+  if (res.sent)            msg += ` Sent ${res.sent} row${res.sent !== 1 ? 's' : ''} to the Google Sheet.`;
+  else if (res.alreadyDone) msg += ' (This month is already in the Google Sheet.)';
+  else if (res.error)       msg += ' Could not reach the Google Sheet — check the link in Settings.';
+  showEmailFeedback(msg, res.error ? 'err' : 'ok');
 
   // Open email client with To + Subject only (body will be pasted)
   window.location.href = `mailto:josh@thetawny.co.uk,jess@thetawny.co.uk?subject=${subject}`;
@@ -1480,6 +1552,11 @@ function fromToMonthKey(from) {
 function fromToMonthLabel(from) {
   const d = new Date(from + 'T00:00:00');
   return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 // ── Keyboard ───────────────────────────────────────────────────────────────────
