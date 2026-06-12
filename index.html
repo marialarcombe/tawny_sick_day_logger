@@ -822,10 +822,199 @@
     color: var(--grey-dark);
   }
 
+  /* ── Return to Work form ── */
+  .rtw-modal {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 0;
+    width: 94%;
+    max-width: 720px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 16px 48px rgba(34,48,58,0.22);
+    overflow: hidden;
+  }
+
+  .rtw-head {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--taupe);
+    background: var(--taupe-pale);
+  }
+
+  .rtw-head h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--slate);
+    font-size: 1.15rem;
+  }
+
+  .rtw-head p { font-size: 0.82rem; color: var(--grey-dark); margin-top: 4px; }
+
+  .rtw-body { padding: 18px 24px; overflow-y: auto; }
+
+  .rtw-section { margin-bottom: 22px; }
+
+  .rtw-section > h4 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.98rem;
+    color: var(--slate);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1.5px solid var(--taupe);
+  }
+
+  .rtw-field { margin-bottom: 14px; }
+
+  .rtw-field > label,
+  .rtw-q {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .rtw-field input[type=text],
+  .rtw-field input[type=number],
+  .rtw-field input[type=date],
+  .rtw-field textarea {
+    width: 100%;
+    padding: 8px 11px;
+    border: 1.5px solid var(--grey);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--black);
+    outline: none;
+    background: var(--white);
+    resize: vertical;
+  }
+
+  .rtw-field input:focus,
+  .rtw-field textarea:focus { border-color: var(--slate); }
+
+  .rtw-grid2 { display: flex; gap: 12px; flex-wrap: wrap; }
+  .rtw-grid2 > .rtw-field { flex: 1; min-width: 200px; }
+
+  .rtw-radios { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .rtw-radios label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1.5px solid var(--grey);
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .rtw-radios label:hover { border-color: var(--taupe); }
+  .rtw-radios input { display: none; }
+  .rtw-radios input:checked + span { color: var(--slate); }
+  .rtw-radios label:has(input:checked) { border-color: var(--slate); background: var(--taupe-pale); color: var(--slate); }
+
+  .rtw-reasons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px 16px;
+  }
+
+  .rtw-reasons label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.83rem;
+    color: #444;
+    cursor: pointer;
+  }
+
+  .rtw-reasons input { width: 15px; height: 15px; accent-color: var(--slate); }
+
+  .rtw-note {
+    font-size: 0.78rem;
+    color: var(--grey-dark);
+    font-style: italic;
+    margin: -4px 0 10px;
+  }
+
+  .rtw-declaration {
+    background: var(--taupe-pale);
+    border: 1px solid var(--taupe);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 12px;
+  }
+
+  .rtw-declaration label { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; }
+  .rtw-declaration input { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--slate); flex-shrink: 0; }
+
+  .rtw-foot {
+    padding: 14px 24px;
+    border-top: 1px solid var(--taupe);
+    background: var(--white);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .rtw-foot .btn-primary { width: auto; flex: 1; min-width: 150px; }
+
+  .rtw-foot .btn-secondary {
+    padding: 13px 18px;
+    background: transparent;
+    border: 2px solid var(--taupe);
+    border-radius: 10px;
+    color: var(--slate);
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .rtw-foot .btn-secondary:hover { background: var(--taupe-pale); border-color: var(--slate); }
+
+  .rtw-feedback {
+    width: 100%;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: none;
+  }
+
+  .rtw-feedback.ok  { display: block; background: var(--green-bg); color: var(--green); border: 1px solid var(--green-bd); font-weight: 600; }
+  .rtw-feedback.err { display: block; background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-bd); }
+
+  .btn-rtw {
+    padding: 6px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--taupe);
+    background: var(--white);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--slate);
+    white-space: nowrap;
+    transition: all 0.12s;
+  }
+
+  .btn-rtw:hover { background: var(--taupe-pale); border-color: var(--slate); }
+  .btn-rtw.done { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+
   @media (max-width: 500px) {
     .status-btns { gap: 4px; }
     .sb { font-size: 0.72rem; padding: 4px 8px; }
     .day-name { min-width: 72px; }
+    .rtw-reasons { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -889,8 +1078,8 @@
 
     <hr class="settings-divider">
 
-    <label>Google Sheet Sync (optional)</label>
-    <p class="hint" style="margin-bottom:10px;">Paste your Google Sheet web app link here to send each month's data to the sheet when you open the email draft. Saved in your browser only, never in the app's code. See the README for the 5-minute setup.</p>
+    <label>Google Sync (optional)</label>
+    <p class="hint" style="margin-bottom:10px;">Paste your Google web app link here to (1) send each month's data to the sheet when you open the email draft, and (2) send completed Return to Work forms to Jess. Saved in your browser only, never in the app's code. See the README for the 5-minute setup.</p>
     <input type="url" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveSheetUrl()" style="max-width:100%;" />
     <p class="hint" id="sheetStatus" style="margin-top:8px;"></p>
 
@@ -988,6 +1177,197 @@
   </div>
 </div>
 
+<!-- Return to Work form modal -->
+<div class="overlay" id="rtwOverlay">
+  <div class="rtw-modal">
+    <div class="rtw-head">
+      <h3>Return to Work &amp; Self Certification Form</h3>
+      <p id="rtwSubtitle"></p>
+    </div>
+
+    <div class="rtw-body">
+      <input type="hidden" id="rtwEntryId" />
+
+      <!-- Section A -->
+      <div class="rtw-section">
+        <h4>Section A — Employee &amp; Absence Details</h4>
+
+        <div class="rtw-grid2">
+          <div class="rtw-field"><label>A1 · Employee name</label><input type="text" id="rtw_name" /></div>
+          <div class="rtw-field"><label>A1 · Payroll number</label><input type="text" id="rtw_payroll" placeholder="If known" /></div>
+        </div>
+        <div class="rtw-grid2">
+          <div class="rtw-field"><label>A2 · Job title</label><input type="text" id="rtw_job" /></div>
+          <div class="rtw-field"><label>A3 · Department</label><input type="text" id="rtw_dept" /></div>
+        </div>
+        <div class="rtw-grid2">
+          <div class="rtw-field"><label>A4 · First day of absence</label><input type="date" id="rtw_first" /></div>
+          <div class="rtw-field"><label>A5 · Date of return to work</label><input type="date" id="rtw_return" /></div>
+          <div class="rtw-field"><label>A6 · Total days absent</label><input type="number" id="rtw_total" min="0" /></div>
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">A7 · Reason(s) given for absence</span>
+          <div class="rtw-reasons">
+            <label><input type="checkbox" id="r_chest"> Chest &amp; Respiratory</label>
+            <label><input type="checkbox" id="r_musculo"> Musculoskeletal / Injury / Fracture</label>
+            <label><input type="checkbox" id="r_cough"> Cough / Cold / Flu / Viral</label>
+            <label><input type="checkbox" id="r_op"> Operation (Post Op Recovery)</label>
+            <label><input type="checkbox" id="r_ent"> Ear / Nose / Throat</label>
+            <label><input type="checkbox" id="r_stress"> Stress / Anxiety / Depression</label>
+            <label><input type="checkbox" id="r_eye"> Eye Problems</label>
+            <label><input type="checkbox" id="r_urinary"> Urinary / Bowel Infection</label>
+            <label><input type="checkbox" id="r_gastro"> Gastrointestinal</label>
+            <label><input type="checkbox" id="r_workinf"> Work Place Infection</label>
+            <label><input type="checkbox" id="r_headache"> Headache / Migraine / Dizziness / Faint</label>
+            <label><input type="checkbox" id="r_other"> Other</label>
+          </div>
+          <input type="text" id="rtw_otherText" placeholder="If Other, please specify" style="margin-top:8px;" />
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">A8 · Did the employee follow the correct procedure for reporting and certifying their absence?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="a8" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="a8" value="No"><span>No</span></label>
+          </div>
+          <input type="text" id="rtw_a8d" placeholder="If No, please provide details" style="margin-top:8px;" />
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">A9 · Has the employee indicated that factors at work may have caused or contributed to the absence?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="a9" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="a9" value="No"><span>No</span></label>
+          </div>
+          <input type="text" id="rtw_a9d" placeholder="If Yes, please provide details" style="margin-top:8px;" />
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">A10 · If related to an accident at work, have the relevant forms been completed and Health &amp; Safety informed?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="a10" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="a10" value="No"><span>No</span></label>
+            <label><input type="radio" name="a10" value="N/A"><span>N/A</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B -->
+      <div class="rtw-section">
+        <h4>Section B — Fitness for Work</h4>
+
+        <div class="rtw-field">
+          <span class="rtw-q">B1 · Has the employee consulted a Doctor or other appropriate medical practitioner?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="b1" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="b1" value="No"><span>No</span></label>
+          </div>
+        </div>
+
+        <p class="rtw-note">B2 only applies if the employee has been absent for more than 7 days.</p>
+        <div class="rtw-field">
+          <span class="rtw-q">B2 · Has the GP made recommendations on a Fit Note (phased return, changes to hours, duties or workplace)?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="b2" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="b2" value="No"><span>No</span></label>
+            <label><input type="radio" name="b2" value="N/A"><span>N/A</span></label>
+          </div>
+          <textarea id="rtw_b2d" rows="2" placeholder="If Yes, agreed changes / why adjustments not practicable (attach Fit Note to the email)" style="margin-top:8px;"></textarea>
+        </div>
+        <div class="rtw-field">
+          <span class="rtw-q">B2 · Does the employee consider any other adjustments are required?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="b2adj" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="b2adj" value="No"><span>No</span></label>
+          </div>
+          <input type="text" id="rtw_b2adjd" placeholder="If Yes, what adjustments" style="margin-top:8px;" />
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">B3 · Is the employee currently taking any medication which may affect their ability to carry out their duties?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="b3" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="b3" value="No"><span>No</span></label>
+          </div>
+          <input type="text" id="rtw_b3d" placeholder="If Yes, medication and any adjustments made" style="margin-top:8px;" />
+        </div>
+
+        <div class="rtw-field">
+          <span class="rtw-q">B4 · Does the employee consider that they are fit enough to return to work?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="b4" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="b4" value="No"><span>No</span></label>
+          </div>
+          <p class="rtw-note">If No, refer the employee for an Occupational Health assessment before resuming work.</p>
+        </div>
+
+        <div class="rtw-field">
+          <label>B5 · Name and address of GP (if further details required)</label>
+          <textarea id="rtw_b5" rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Section C -->
+      <div class="rtw-section">
+        <h4>Section C — Employee Absence Record</h4>
+        <div class="rtw-field">
+          <span class="rtw-q">C1 · Has the employee had 2 or more periods of absence in the previous 3 months?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="c1a" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="c1a" value="No"><span>No</span></label>
+          </div>
+        </div>
+        <div class="rtw-field">
+          <span class="rtw-q">C1 · Has the employee had 3 or more periods of absence in the previous 12 months?</span>
+          <div class="rtw-radios">
+            <label><input type="radio" name="c1b" value="Yes"><span>Yes</span></label>
+            <label><input type="radio" name="c1b" value="No"><span>No</span></label>
+          </div>
+          <p class="rtw-note">If Yes to either, please speak to the Hotel Manager for a follow up.</p>
+        </div>
+      </div>
+
+      <!-- Section D -->
+      <div class="rtw-section">
+        <h4>Section D — Comments &amp; Declarations</h4>
+
+        <div class="rtw-field">
+          <label>Additional comments — Manager</label>
+          <textarea id="rtw_mgrComments" rows="2"></textarea>
+        </div>
+        <div class="rtw-grid2">
+          <div class="rtw-field"><label>Manager signature (type full name)</label><input type="text" id="rtw_mgrSign" /></div>
+          <div class="rtw-field"><label>Date</label><input type="date" id="rtw_mgrDate" /></div>
+        </div>
+
+        <div class="rtw-field">
+          <label>Additional comments — Employee</label>
+          <textarea id="rtw_empComments" rows="2"></textarea>
+        </div>
+        <div class="rtw-declaration">
+          <label>
+            <input type="checkbox" id="rtw_empDeclare">
+            <span>I certify that I have been absent from work for the period stated, due to the incapacity indicated. To the best of my information, knowledge and belief, these facts are correct. I understand that further investigations may be made and I authorise the company to approach my GP should they require further information.</span>
+          </label>
+        </div>
+        <div class="rtw-grid2">
+          <div class="rtw-field"><label>Employee signature (type full name)</label><input type="text" id="rtw_empSign" /></div>
+          <div class="rtw-field"><label>Date</label><input type="date" id="rtw_empDate" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rtw-foot">
+      <div class="rtw-feedback" id="rtwFeedback"></div>
+      <button class="btn-secondary" onclick="closeRtw()">Cancel</button>
+      <button class="btn-secondary" onclick="previewRtwPdf()">👁 Preview PDF</button>
+      <button class="btn-primary" onclick="submitRtw()">Send to Jess</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 // ── Constants ──────────────────────────────────────────────────────────────────
 const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1049,8 +1429,8 @@ function updateSheetStatus() {
   const el  = document.getElementById('sheetStatus');
   if (!el) return;
   el.textContent  = url
-    ? '✓ Linked — this month’s data will be sent to the sheet when you open the email draft.'
-    : 'Not linked — emailing still works; no data is sent to a sheet.';
+    ? '✓ Linked — month-end data syncs to the sheet, and Return to Work forms can be sent to Jess.'
+    : 'Not linked — emailing still works; no data is sent to a sheet and RTW forms can’t be sent to Jess (you can still preview/download them).';
   el.style.color  = url ? '#15803d' : '#6e7c84';
 }
 
@@ -1234,6 +1614,7 @@ function saveEntry() {
   savedEntries.unshift({
     id: Date.now(), employee: selectedEmp,
     from, to, sick, report, monthKey, monthLabel,
+    sickDates,
     savedAt: new Date().toLocaleDateString('en-GB')
   });
   localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
@@ -1281,6 +1662,7 @@ function renderEntries() {
       </div>
       <div class="entry-badge">🤒 ${e.sick} shift${e.sick !== 1 ? 's' : ''}</div>
       <div class="entry-actions">
+        <button class="btn-rtw ${e.rtwSubmitted ? 'done' : ''}" title="Return to Work form" onclick="openRtw(${e.id})">${e.rtwSubmitted ? '✓ RTW sent' : '📝 RTW form'}</button>
         <button class="icon-btn" title="View" onclick="viewEntry(${e.id})">👁</button>
         <button class="icon-btn del" title="Delete" onclick="deleteEntry(${e.id})">🗑</button>
       </div>`;
@@ -1320,6 +1702,278 @@ function deleteEntry(id) {
   savedEntries = savedEntries.filter(e => e.id !== id);
   localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
   renderEntries();
+}
+
+// ── Return to Work form ────────────────────────────────────────────────────────
+// Reason checkbox id → label, in the same order as the official form
+const RTW_REASONS = [
+  ['r_chest','Chest & Respiratory'], ['r_musculo','Musculoskeletal / Injury / Fracture'],
+  ['r_cough','Cough / Cold / Flu / Viral'], ['r_op','Operation (Post Op Recovery)'],
+  ['r_ent','Ear / Nose / Throat'], ['r_stress','Stress / Anxiety / Depression'],
+  ['r_eye','Eye Problems'], ['r_urinary','Urinary / Bowel Infection'],
+  ['r_gastro','Gastrointestinal'], ['r_workinf','Work Place Infection'],
+  ['r_headache','Headache / Migraine / Dizziness / Faint']
+];
+
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getRadio(name) {
+  const el = document.querySelector(`#rtwOverlay input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+function openRtw(id) {
+  const e = savedEntries.find(x => x.id === id);
+  if (!e) return;
+
+  // Always start clean — RTW answers are never retained between sessions
+  const root = document.getElementById('rtwOverlay');
+  root.querySelectorAll('input[type=text],input[type=number],input[type=date],textarea').forEach(el => el.value = '');
+  root.querySelectorAll('input[type=checkbox],input[type=radio]').forEach(el => el.checked = false);
+  showRtwFeedback('', '');
+
+  document.getElementById('rtwEntryId').value = id;
+  document.getElementById('rtwSubtitle').textContent =
+    `${e.employee} · ${e.monthLabel || ''} · ${e.sick} shift${e.sick !== 1 ? 's' : ''} missed`;
+
+  // Pre-fill what we already know from the logged absence
+  document.getElementById('rtw_name').value   = e.employee;
+  const firstSick = (e.sickDates && e.sickDates.length) ? e.sickDates[0] : e.from;
+  document.getElementById('rtw_first').value  = firstSick;
+  document.getElementById('rtw_return').value = e.to;
+  document.getElementById('rtw_total').value  = e.sick;
+  document.getElementById('rtw_mgrDate').value = todayISO();
+  document.getElementById('rtw_empDate').value = todayISO();
+
+  // Pre-fill non-sensitive profile fields (payroll/job/dept) if we've stored them before
+  const profiles = JSON.parse(localStorage.getItem('tawny_profiles') || '{}');
+  const p = profiles[e.employee] || {};
+  document.getElementById('rtw_payroll').value = p.payroll || '';
+  document.getElementById('rtw_job').value     = p.job || '';
+  document.getElementById('rtw_dept').value    = p.dept || '';
+
+  // Pre-fill manager signature with the saved sign-off name, if any
+  document.getElementById('rtw_mgrSign').value = localStorage.getItem('tawny_manager') || '';
+
+  root.classList.add('open');
+  root.querySelector('.rtw-body').scrollTop = 0;
+}
+
+function closeRtw() { document.getElementById('rtwOverlay').classList.remove('open'); }
+
+function collectRtw() {
+  const v = id => document.getElementById(id).value.trim();
+  const reasons = RTW_REASONS.filter(([cid]) => document.getElementById(cid).checked).map(([,lab]) => lab);
+  if (document.getElementById('r_other').checked) {
+    reasons.push('Other' + (v('rtw_otherText') ? ': ' + v('rtw_otherText') : ''));
+  }
+  return {
+    name: v('rtw_name'), payroll: v('rtw_payroll'), job: v('rtw_job'), dept: v('rtw_dept'),
+    first: v('rtw_first'), ret: v('rtw_return'), total: v('rtw_total'),
+    reasons,
+    a8: getRadio('a8'), a8d: v('rtw_a8d'),
+    a9: getRadio('a9'), a9d: v('rtw_a9d'),
+    a10: getRadio('a10'),
+    b1: getRadio('b1'),
+    b2: getRadio('b2'), b2d: v('rtw_b2d'),
+    b2adj: getRadio('b2adj'), b2adjd: v('rtw_b2adjd'),
+    b3: getRadio('b3'), b3d: v('rtw_b3d'),
+    b4: getRadio('b4'),
+    b5: v('rtw_b5'),
+    c1a: getRadio('c1a'), c1b: getRadio('c1b'),
+    mgrComments: v('rtw_mgrComments'), mgrSign: v('rtw_mgrSign'), mgrDate: v('rtw_mgrDate'),
+    empComments: v('rtw_empComments'),
+    empDeclare: document.getElementById('rtw_empDeclare').checked,
+    empSign: v('rtw_empSign'), empDate: v('rtw_empDate')
+  };
+}
+
+function rtwFmt(iso) { return iso ? fmtDate(iso) : '—'; }
+
+function buildRtwPdf(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const ML = 15, MR = 195, W = MR - ML;   // margins, usable width
+  let y = 16;
+
+  const ensure = h => { if (y + h > 285) { doc.addPage(); y = 16; } };
+  const slate = () => doc.setTextColor(42, 59, 69);
+  const black = () => doc.setTextColor(34, 48, 58);
+
+  // Header: wordmark + title
+  doc.setFont('times', 'normal'); doc.setFontSize(22); doc.setTextColor(156, 107, 74);
+  doc.text('The Tawny', MR, y, { align: 'right' });
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13); slate();
+  doc.text('Return to Work & Self Certification Form', ML, y);
+  y += 7;
+  doc.setDrawColor(201, 188, 170); doc.setLineWidth(0.4); doc.line(ML, y, MR, y);
+  y += 7;
+
+  function sectionHead(t) {
+    ensure(12);
+    doc.setFillColor(244, 239, 232); doc.rect(ML, y - 4, W, 7, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); slate();
+    doc.text(t, ML + 2, y + 1);
+    y += 9;
+  }
+
+  // label: value on one line, value wrapping under if long
+  function field(label, value) {
+    value = value || '—';
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); black();
+    doc.text(label, ML, y);
+    const lw = doc.getTextWidth(label + '  ');
+    doc.setFont('helvetica', 'normal');
+    const lines = doc.splitTextToSize(value, W - lw);
+    doc.text(lines[0], ML + lw, y);
+    for (let i = 1; i < lines.length; i++) { y += 4.6; ensure(6); doc.text(lines[i], ML, y); }
+    y += 6; ensure(6);
+  }
+
+  // question with Yes/No answer, optional details line
+  function question(q, ans, details) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); black();
+    const qlines = doc.splitTextToSize(q, W - 22);
+    ensure(qlines.length * 4.6 + 2);
+    qlines.forEach((ln, i) => { doc.text(ln, ML, y); if (i < qlines.length - 1) y += 4.6; });
+    doc.setFont('helvetica', 'bold'); slate();
+    doc.text(ans || '—', MR, y, { align: 'right' });
+    y += 5.4; black();
+    if (details) {
+      doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(110, 124, 132);
+      const dl = doc.splitTextToSize('— ' + details, W - 4);
+      dl.forEach(ln => { ensure(5); doc.text(ln, ML + 2, y); y += 4.2; });
+      black();
+    }
+    y += 1.5; ensure(6);
+  }
+
+  // SECTION A
+  sectionHead('Section A — Employee & Absence Details');
+  field('Employee name:', d.name);
+  field('Payroll number:', d.payroll);
+  field('Job title:', d.job);
+  field('Department:', d.dept);
+  field('First day of absence:', rtwFmt(d.first));
+  field('Date of return to work:', rtwFmt(d.ret));
+  field('Total days absent:', d.total);
+  field('Reason(s) for absence:', d.reasons.length ? d.reasons.join('; ') : '—');
+  question('A8 · Did the employee follow the correct procedure for reporting and certifying their absence?', d.a8, d.a8 === 'No' ? d.a8d : '');
+  question('A9 · Has the employee indicated that factors at work may have caused or contributed to the absence?', d.a9, d.a9 === 'Yes' ? d.a9d : '');
+  question('A10 · If related to an accident at work, have the relevant forms been completed and H&S informed?', d.a10);
+
+  // SECTION B
+  sectionHead('Section B — Fitness for Work');
+  question('B1 · Has the employee consulted a Doctor or other appropriate medical practitioner?', d.b1);
+  question('B2 · Has the GP made recommendations on a Fit Note (phased return / changes to hours, duties or workplace)? [if absent >7 days]', d.b2, d.b2 === 'Yes' ? d.b2d : '');
+  question('B2 · Does the employee consider any other adjustments are required?', d.b2adj, d.b2adj === 'Yes' ? d.b2adjd : '');
+  question('B3 · Is the employee taking any medication which may affect their ability to carry out their duties?', d.b3, d.b3 === 'Yes' ? d.b3d : '');
+  question('B4 · Does the employee consider that they are fit enough to return to work?', d.b4, d.b4 === 'No' ? 'Refer for an Occupational Health assessment before resuming work.' : '');
+  field('B5 · GP name & address:', d.b5);
+
+  // SECTION C
+  sectionHead('Section C — Employee Absence Record');
+  question('C1 · 2 or more periods of absence in the previous 3 months?', d.c1a);
+  question('C1 · 3 or more periods of absence in the previous 12 months?', d.c1b);
+  if (d.c1a === 'Yes' || d.c1b === 'Yes') {
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(8.5); doc.setTextColor(110, 124, 132);
+    ensure(5); doc.text('— Speak to the Hotel Manager for a follow up.', ML + 2, y); y += 5; black();
+  }
+
+  // SECTION D
+  sectionHead('Section D — Comments & Declarations');
+  field('Manager comments:', d.mgrComments);
+  field('Employee comments:', d.empComments);
+  ensure(10);
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(8.2); doc.setTextColor(110, 124, 132);
+  const dec = doc.splitTextToSize('Employee declaration: "I certify that I have been absent from work for the period stated, due to the incapacity indicated. To the best of my information, knowledge and belief, these facts are correct. I understand that further investigations may be made and I authorise the company to approach my GP should they require further information."', W);
+  dec.forEach(ln => { ensure(5); doc.text(ln, ML, y); y += 4; });
+  y += 2;
+  field('Declaration accepted by employee:', d.empDeclare ? 'Yes' : 'No');
+  y += 2; ensure(20);
+  doc.setDrawColor(201, 188, 170); doc.line(ML, y, MR, y); y += 6;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(9); black();
+  doc.text(`Manager (signed):  ${d.mgrSign || '—'}`, ML, y);
+  doc.text(`Date:  ${rtwFmt(d.mgrDate)}`, MR, y, { align: 'right' }); y += 7;
+  doc.text(`Employee (signed):  ${d.empSign || '—'}`, ML, y);
+  doc.text(`Date:  ${rtwFmt(d.empDate)}`, MR, y, { align: 'right' }); y += 9;
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); doc.setTextColor(150, 150, 150);
+  doc.text('Completed electronically via The Tawny Sick Day Logger. Typed names constitute electronic signatures.', ML, y);
+
+  return doc;
+}
+
+function rtwFilename(d) {
+  const safe = (d.name || 'employee').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+  return `RTW-${safe}-${(d.first || '').slice(0,7)}.pdf`;
+}
+
+function previewRtwPdf() {
+  if (!window.jspdf) { showRtwFeedback('PDF library still loading — try again in a moment.', 'err'); return; }
+  const d = collectRtw();
+  const doc = buildRtwPdf(d);
+  try { window.open(doc.output('bloburl'), '_blank'); }
+  catch (e) { doc.save(rtwFilename(d)); }
+}
+
+async function submitRtw() {
+  if (!window.jspdf) { showRtwFeedback('PDF library still loading — try again in a moment.', 'err'); return; }
+  const d = collectRtw();
+
+  if (!d.name)    { showRtwFeedback('Please enter the employee name.', 'err'); return; }
+  if (!d.mgrSign) { showRtwFeedback('Please add the manager signature (type your name) before sending.', 'err'); return; }
+
+  const url = (localStorage.getItem('tawny_sheet_url') || '').trim();
+  if (!url) {
+    showRtwFeedback('No Google link set in Settings, so this can’t be sent to Jess yet. Use Preview PDF to download a copy, or add the link in ⚙ Settings.', 'err');
+    return;
+  }
+
+  const id   = Number(document.getElementById('rtwEntryId').value);
+  const e    = savedEntries.find(x => x.id === id) || {};
+  const doc  = buildRtwPdf(d);
+  const b64  = doc.output('datauristring').split('base64,')[1];
+  const fname= rtwFilename(d);
+
+  // Remember non-sensitive profile fields for next time (no health data stored)
+  const profiles = JSON.parse(localStorage.getItem('tawny_profiles') || '{}');
+  profiles[d.name] = { payroll: d.payroll, job: d.job, dept: d.dept };
+  localStorage.setItem('tawny_profiles', JSON.stringify(profiles));
+
+  showRtwFeedback('Sending to Jess…', 'ok');
+
+  const payload = {
+    type: 'rtw',
+    employee: d.name,
+    monthLabel: e.monthLabel || '',
+    filename: fname,
+    pdfBase64: b64
+  };
+
+  try {
+    await fetch(url, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    // Optimistic: mark done (no medical detail is stored — only that it was sent)
+    if (e.id) { e.rtwSubmitted = true; e.rtwSubmittedAt = new Date().toLocaleDateString('en-GB'); }
+    localStorage.setItem('tawny_entries', JSON.stringify(savedEntries));
+    renderEntries();
+    showRtwFeedback('✓ Return to Work form sent to Jess. A copy was not stored on this device.', 'ok');
+    setTimeout(closeRtw, 1600);
+  } catch (err) {
+    showRtwFeedback('Could not reach the Google link — check it in Settings, or use Preview PDF to download and send manually.', 'err');
+  }
+}
+
+function showRtwFeedback(msg, type) {
+  const el = document.getElementById('rtwFeedback');
+  el.textContent = msg;
+  el.className = 'rtw-feedback' + (type ? ' ' + type : '');
 }
 
 // ── Email ──────────────────────────────────────────────────────────────────────
