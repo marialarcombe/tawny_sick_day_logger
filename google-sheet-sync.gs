@@ -21,6 +21,10 @@
 // Where Return to Work PDFs are sent. Change if needed.
 const RTW_RECIPIENT = 'jess@thetawny.co.uk';
 
+// Optional: blind-copy (bcc) address. You get a silent copy of every RTW email
+// so you can confirm it sent — Jess won't see this line. Leave '' to disable.
+const RTW_BCC = 'maria@ensarb.com';
+
 // Optional: also drop a copy of each RTW PDF into a Google Drive folder.
 // Paste a Drive folder ID here to enable, or leave '' to skip.
 const RTW_DRIVE_FOLDER_ID = '';
@@ -82,12 +86,14 @@ function handleRtw_(data) {
                (data.employee || 'the employee') + '.\n\n' +
                'Sent automatically from The Tawny Sick Day Logger.';
 
-  MailApp.sendEmail({
+  const mail = {
     to: RTW_RECIPIENT,
     subject: subject,
     body: body,
     attachments: [blob]
-  });
+  };
+  if (RTW_BCC) mail.bcc = RTW_BCC;
+  MailApp.sendEmail(mail);
 
   // Optional: also file a copy in Drive
   if (RTW_DRIVE_FOLDER_ID) {

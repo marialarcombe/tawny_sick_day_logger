@@ -921,8 +921,8 @@
   }
 
   .rtw-radios label:hover { border-color: var(--taupe); }
-  .rtw-radios input { display: none; }
-  .rtw-radios input:checked + span { color: var(--slate); }
+  .rtw-radios input { margin: 0 3px 0 0; accent-color: var(--slate); cursor: pointer; }
+  .rtw-radios input:checked + span { color: var(--slate); font-weight: 700; }
   .rtw-radios label:has(input:checked) { border-color: var(--slate); background: var(--taupe-pale); color: var(--slate); }
 
   .rtw-reasons {
@@ -1940,6 +1940,13 @@ async function submitRtw() {
 
   if (!d.name)    { showRtwFeedback('Please enter the employee name.', 'err'); return; }
   if (!d.mgrSign) { showRtwFeedback('Please add the manager signature (type your name) before sending.', 'err'); return; }
+
+  // Safety net: warn before sending a form with no reason and no Yes/No answers selected
+  const anyReason = d.reasons.length > 0;
+  const anyAnswer = [d.a8, d.a9, d.a10, d.b1, d.b2, d.b2adj, d.b3, d.b4, d.c1a, d.c1b].some(x => x);
+  if (!anyReason && !anyAnswer) {
+    if (!confirm('This form has no reason for absence and none of the Yes/No questions answered.\n\nSend it to Jess anyway?')) return;
+  }
 
   const url = (localStorage.getItem('tawny_sheet_url') || '').trim();
   if (!url) {
